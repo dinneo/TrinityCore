@@ -2092,7 +2092,7 @@ class TC_GAME_API Unit : public WorldObject
         void UpdateAuraForGroup(uint8 slot);
 
         // proc trigger system
-        bool CanProc() const {return !m_procDeep;}
+        bool CanProc() const { return !m_procDeep; }
         void SetCantProc(bool apply);
 
         // pet auras
