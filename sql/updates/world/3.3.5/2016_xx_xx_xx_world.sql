@@ -14,6 +14,24 @@ DELETE FROM `spell_bonus_data` WHERE `entry`=379;
 -- Remove renamed scripts
 DELETE FROM `spell_script_names` WHERE `ScriptName` IN ('spell_gen_dummy_trigger','spell_pri_item_greater_heal_refund');
 
+-- Stop console spam from dummy EFFECT_2 proc
+DELETE FROM `spell_script_names` WHERE `ScriptName` = 'spell_pal_seals';
+INSERT INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES
+(20375, 'spell_pal_seals'), -- Seal of Command
+(21084, 'spell_pal_seals'), -- Seal of Righteousness
+(31801, 'spell_pal_seals'), -- Seal of Vengeance
+(31892, 'spell_pal_seals'), -- Seal of Blood
+(33127, 'spell_pal_seals'), -- Seal of Command
+(38008, 'spell_pal_seals'), -- Seal of Blood
+(41459, 'spell_pal_seals'), -- Seal of Blood
+(53720, 'spell_pal_seals'), -- Seal of the Martyr
+(53736, 'spell_pal_seals'); -- Seal of Corruption
+
+-- Grouped several hacks and handled with AuraScript now
+DELETE FROM `spell_script_names` WHERE `ScriptName` = 'spell_mage_fingers_of_frost';
+INSERT INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES
+(74396, 'spell_mage_fingers_of_frost'); -- Fingers of Frost
+
 -- Threat of Thassarian triggered spells, for easier script access
 DELETE FROM `spell_ranks` WHERE `first_spell_id` IN (59133,66198,66196,66216,66188,66215);
 INSERT INTO `spell_ranks` (`first_spell_id`, `spell_id`, `rank`) VALUES

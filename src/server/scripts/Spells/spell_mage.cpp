@@ -62,7 +62,8 @@ enum MageSpells
     SPELL_MAGE_T10_2P_BONUS                      = 70752,
     SPELL_MAGE_T10_2P_BONUS_EFFECT               = 70753,
     SPELL_MAGE_T8_4P_BONUS                       = 64869,
-    SPELL_MAGE_MISSILE_BARRAGE                   = 44401
+    SPELL_MAGE_MISSILE_BARRAGE                   = 44401,
+    SPELL_MAGE_FINGERS_OF_FROST_AURASTATE_AURA   = 44544
 };
 
 enum MageSpellIcons
@@ -478,6 +479,47 @@ class spell_mage_empowered_fire : public SpellScriptLoader
         AuraScript* GetAuraScript() const override
         {
             return new spell_mage_empowered_fire_AuraScript();
+        }
+};
+
+// 74396 - Fingers of Frost
+class spell_mage_fingers_of_frost : public SpellScriptLoader
+{
+    public:
+        spell_mage_fingers_of_frost() : SpellScriptLoader("spell_mage_fingers_of_frost") { }
+
+        class spell_mage_fingers_of_frost_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_mage_fingers_of_frost_AuraScript);
+
+            bool Validate(SpellInfo const* /*spellInfo*/) override
+            {
+                if (!sSpellMgr->GetSpellInfo(SPELL_MAGE_FINGERS_OF_FROST_AURASTATE_AURA))
+                    return false;
+                return true;
+            }
+
+            void HandleDummy(AuraEffect const* /*aurEff*/, ProcEventInfo& eventInfo)
+            {
+                PreventDefaultAction();
+                eventInfo.GetActor()->RemoveAuraFromStack(GetId());
+            }
+
+            void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+            {
+                GetTarget()->RemoveAurasDueToSpell(SPELL_MAGE_FINGERS_OF_FROST_AURASTATE_AURA);
+            }
+
+            void Register() override
+            {
+                OnEffectProc += AuraEffectProcFn(spell_mage_fingers_of_frost_AuraScript::HandleDummy, EFFECT_0, SPELL_AURA_DUMMY);
+                AfterEffectRemove += AuraEffectRemoveFn(spell_mage_fingers_of_frost_AuraScript::OnRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+            }
+        };
+
+        AuraScript* GetAuraScript() const override
+        {
+            return new spell_mage_fingers_of_frost_AuraScript();
         }
 };
 
@@ -1244,6 +1286,7 @@ void AddSC_mage_spell_scripts()
     new spell_mage_imp_blizzard();
     new spell_mage_imp_mana_gems();
     new spell_mage_empowered_fire();
+    new spell_mage_fingers_of_frost();
     new spell_mage_fire_frost_ward();
     new spell_mage_focus_magic();
     new spell_mage_gen_extra_effects();

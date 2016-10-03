@@ -2135,6 +2135,42 @@ class spell_pal_seal_of_vengeance : public SpellScriptLoader
         }
 };
 
+// 20375 - Seal of Command
+// 21084 - Seal of Righteousness
+// 31801 - Seal of Vengeance
+// 31892 - Seal of Blood
+// 33127 - Seal of Command
+// 38008 - Seal of Blood
+// 41459 - Seal of Blood
+// 53720 - Seal of the Martyr
+// 53736 - Seal of Corruption
+class spell_pal_seals : public SpellScriptLoader
+{
+    public:
+        spell_pal_seals() : SpellScriptLoader("spell_pal_seals") { }
+
+        class spell_pal_seals_AuraScript : public AuraScript
+        {
+            PrepareAuraScript(spell_pal_seals_AuraScript);
+
+            // Effect 2 is used by Judgement code, we prevent the proc to avoid console logging of unknown spell trigger
+            bool CheckDummyProc(AuraEffect const* /*aurEff*/, ProcEventInfo& /*eventInfo*/)
+            {
+                return false;
+            }
+
+            void Register() override
+            {
+                DoCheckEffectProc += AuraCheckEffectProcFn(spell_pal_seals_AuraScript::CheckDummyProc, EFFECT_2, SPELL_AURA_DUMMY);
+            }
+        };
+
+        AuraScript* GetAuraScript() const override
+        {
+            return new spell_pal_seals_AuraScript();
+        }
+};
+
 // -31785 - Spiritual Attunement
 class spell_pal_spiritual_attunement : public SpellScriptLoader
 {
@@ -2398,6 +2434,7 @@ void AddSC_paladin_spell_scripts()
     new spell_pal_seal_of_righteousness();
     new spell_pal_seal_of_vengeance<SPELL_PALADIN_HOLY_VENGEANCE, SPELL_PALADIN_SEAL_OF_VENGEANCE_DAMAGE>("spell_pal_seal_of_vengeance");
     new spell_pal_seal_of_vengeance<SPELL_PALADIN_BLOOD_CORRUPTION, SPELL_PALADIN_SEAL_OF_CORRUPTION_DAMAGE>("spell_pal_seal_of_corruption");
+    new spell_pal_seals();
     new spell_pal_spiritual_attunement();
     new spell_pal_sheath_of_light();
     new spell_pal_t3_6p_bonus();
